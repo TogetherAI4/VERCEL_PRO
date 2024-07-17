@@ -1,5 +1,3 @@
 Flask
 Werkzeug
 pandas
-sqlite3==0.0.1
-
