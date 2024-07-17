@@ -1,0 +1,261 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+*,
+:after,
+:before {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: #121212;
+  color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+header {
+  background-color: #1f1f1f;
+  border-bottom: 1px solid #333;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header .logo img {
+  height: 50px;
+}
+
+header nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+}
+
+header nav ul li a {
+  color: #888;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+header nav ul li a:hover {
+  color: #ffffff;
+}
+
+.container {
+  padding: 2rem;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+}
+
+.search-chat-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.search-chat-container input[type="text"],
+.search-chat-container button,
+.chat-form input[type="text"],
+.chat-form button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.search-chat-container input[type="text"] {
+  flex: 1;
+  background: #2b2b2b;
+  color: #ffffff;
+}
+
+.search-chat-container button {
+  background: #008878;
+  color: #ffffff;
+}
+
+.search-chat-container button:hover {
+  background: #006e5e;
+}
+
+.chat-form {
+  display: flex;
+  gap: 1rem;
+}
+
+.chat-form input[type="text"] {
+  flex: 1;
+  background: #2b2b2b;
+  color: #ffffff;
+}
+
+.chat-form button {
+  background: #008878;
+  color: #ffffff;
+}
+
+.chat-form button:hover {
+  background: #006e5e;
+}
+
+.loading {
+  display: none;
+  text-align: center;
+  font-size: 1.5rem;
+  margin: 2rem 0;
+}
+
+.content {
+  display: flex;
+  gap: 2rem;
+}
+
+.prompt-list {
+  flex: 2;
+}
+
+.prompt-item {
+  background: #1f1f1f;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.prompt-item h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+}
+
+.prompt-item .show-more {
+  color: #008878;
+  cursor: pointer;
+}
+
+.prompt-details {
+  flex: 1;
+  background: #1f1f1f;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.prompt-details h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.prompt-details p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: #bbbbbb;
+}
+
+.prompt-details button {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 4px;
+  background: #008878;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.prompt-details button:hover {
+  background: #006e5e;
+}
+
+.pagination {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.pagination button {
+  background: #008878;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  margin: 0 0.5rem;
+}
+
+.pagination button:hover {
+  background: #006e5e;
+}
+
+.bottom-section {
+  margin-top: 2rem;
+}
+
+.add-prompt {
+  background: #1f1f1f;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.add-prompt h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.add-prompt-form input[type="text"],
+.add-prompt-form textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: #2b2b2b;
+  color: #ffffff;
+}
+
+.add-prompt-form button {
+  background: #008878;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.add-prompt-form button:hover {
+  background: #006e5e;
+}
+
+.chat-box {
+  background: #1f1f1f;
+  padding: 1rem;
+  border-radius: 4px;
+  height: 400px;
+  overflow-y: scroll;
+  margin-bottom: 1rem;
+}
+
+.chat-message {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background: #2b2b2b;
+}
+
+.chat-message span {
+  font-weight: 600;
+  color: #008878;
+}

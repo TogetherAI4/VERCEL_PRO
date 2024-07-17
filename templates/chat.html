@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="https://einfachalex.net/wp-content/uploads/2024/02/696f61d7a31edd36aa11414db3ba2854.png" alt="Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/prompts">Prompts</a></li>
+                <li><a href="/chat">Chat</a></li>
+                <li><a href="/add_prompt">Add New Prompt</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <h1>Chat</h1>
+        <div id="chat-box" class="chat-box"></div>
+        <form id="chat-form" class="chat-form">
+            <input type="text" id="chat-input" placeholder="Type a message..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#chat-form').submit(function(event) {
+                event.preventDefault();
+                const userMessage = $('#chat-input').val();
+                if (userMessage.trim() !== '') {
+                    $('#chat-box').append(`<div class="user-message"><strong>You:</strong> ${userMessage}</div>`);
+                    $('#chat-input').val('');
+                    const messages = [{"role": "user", "content": userMessage}];
+                    $.ajax({
+                        url: '/api/chat',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({messages: messages}),
+                        success: function(response) {
+                            const assistantMessage = response.response;
+                            $('#chat-box').append(`<div class="assistant-message"><strong>Assistant:</strong> ${assistantMessage}</div>`);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
