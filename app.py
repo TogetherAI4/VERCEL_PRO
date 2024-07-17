@@ -1,15 +1,14 @@
 from flask import Flask, jsonify, request, render_template
-import json
-import os
+import sqlite3
 
 app = Flask(__name__)
 
-# Pfad zur JSON-Datei
-json_file_path = os.path.join(os.path.dirname(__file__), 'prompts_cleaned_and_corrected.json')
-
-# JSON-Datei laden
-with open(json_file_path, 'r', encoding='utf-8') as file:
-    prompts_json = json.load(file)
+# Datenbankverbindung herstellen
+def get_db_connection():
+    conn = sqlite3.connect('prompts.db')
+    conn.execute('PRAGMA journal_mode=WAL;')
+    conn.row_factory = sqlite3.Row
+    return conn
 
 @app.route('/')
 def index():
@@ -17,35 +16,56 @@ def index():
 
 @app.route('/prompts', methods=['GET'])
 def get_prompts():
-    return jsonify(prompts_json)
+    conn = get_db_connection()
+    prompts = conn.execute('SELECT * FROM prompts').fetchall()
+    conn.close()
+    return jsonify([dict(prompt) for prompt in prompts])
 
 @app.route('/prompts', methods=['POST'])
 def add_prompt():
     new_prompt = request.json
-    global prompts_json
-    prompts_json.append(new_prompt)
-    with open(json_file_path, 'w', encoding='utf-8') as file:
-        json.dump(prompts_json, file, indent=4, ensure_ascii=False)
+    prompt_id = new_prompt.get('Prompt ID')
+    title = new_prompt.get('Titel')
+    prompt_text = new_prompt.get('Prompt')
+
+    # Debugging-Informationen hinzufügen
+    if not prompt_id or not title or not prompt_text:
+        return jsonify({"error": "Missing required fields: prompt_id, title, or prompt"}), 400
+
+    conn = get_db_connection()
+    conn.execute('INSERT INTO prompts (prompt_id, title, prompt) VALUES (?, ?, ?)',
+                 (prompt_id, title, prompt_text))
+    conn.commit()
+    conn.close()
+
     return jsonify(new_prompt), 201
 
-@app.route('/prompts/<string:id>', methods=['PUT'])
+
+@app.route('/prompts/<int:id>', methods=['PUT'])
 def update_prompt(id):
     updated_prompt = request.json
-    global prompts_json
-    for i, prompt in enumerate(prompts_json):
-        if prompt['Prompt ID'] == id:
-            prompts_json[i] = updated_prompt
-            break
-    with open(json_file_path, 'w', encoding='utf-8') as file:
-        json.dump(prompts_json, file, indent=4, ensure_ascii=False)
+    prompt_id = updated_prompt.get('Prompt ID')
+    title = updated_prompt.get('title')  # Stelle sicher, dass der Schlüssel 'title' ist
+    prompt_text = updated_prompt.get('prompt')  # Stelle sicher, dass der Schlüssel 'prompt' ist
+
+    if not prompt_id or not title or not prompt_text:
+        return jsonify({"error": "prompt_id, title, and prompt are required"}), 400
+
+    conn = get_db_connection()
+    conn.execute('UPDATE prompts SET prompt_id = ?, title = ?, prompt = ? WHERE id = ?',
+                 (prompt_id, title, prompt_text, id))
+    conn.commit()
+    conn.close()
+
     return jsonify(updated_prompt)
 
-@app.route('/prompts/<string:id>', methods=['DELETE'])
+@app.route('/prompts/<int:id>', methods=['DELETE'])
 def delete_prompt(id):
-    global prompts_json
-    prompts_json = [prompt for prompt in prompts_json if prompt['Prompt ID'] != id]
-    with open(json_file_path, 'w', encoding='utf-8') as file:
-        json.dump(prompts_json, file, indent=4, ensure_ascii=False)
+    conn = get_db_connection()
+    conn.execute('DELETE FROM prompts WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+
     return '', 204
 
 @app.route('/chat')

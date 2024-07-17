@@ -17,10 +17,10 @@ $(document).ready(function () {
         const paginatedData = promptsData.slice(start, end);
 
         paginatedData.forEach(prompt => {
-            const promptTitle = prompt['Titel'] || '';
+            const promptTitle = prompt['title'] || '';
             $('#prompt-list').append(`
-                <div class="prompt-item" data-id="${prompt['Prompt ID']}">
-                    <h3>${truncateText(promptTitle, 30)}${promptTitle.length > 30 ? '... <span class="show-more" data-id="' + prompt['Prompt ID'] + '">mehr anzeigen</span>' : ''}</h3>
+                <div class="prompt-item" data-id="${prompt['id']}">
+                    <h3>${truncateText(promptTitle, 30)}${promptTitle.length > 30 ? '... <span class="show-more" data-id="' + prompt['id'] + '">mehr anzeigen</span>' : ''}</h3>
                 </div>
             `);
         });
@@ -29,14 +29,14 @@ $(document).ready(function () {
         $('#prompt-list').on('click', '.show-more', function (event) {
             event.stopPropagation();
             const id = $(this).data('id');
-            const selectedPrompt = promptsData.find(prompt => prompt['Prompt ID'] === id);
+            const selectedPrompt = promptsData.find(prompt => prompt['id'] === id);
             displayPromptDetails(selectedPrompt);
         });
 
         // Delegierte Ereignisbindung für "prompt-item"
         $('#prompt-list').on('click', '.prompt-item', function () {
             const id = $(this).data('id');
-            const selectedPrompt = promptsData.find(prompt => prompt['Prompt ID'] === id);
+            const selectedPrompt = promptsData.find(prompt => prompt['id'] === id);
             displayPromptDetails(selectedPrompt);
         });
     }
@@ -51,10 +51,10 @@ $(document).ready(function () {
     function displayPromptDetails(prompt) {
         if (!prompt) return;
         $('#details-content').html(`
-            <h3>${prompt['Titel']}</h3>
-            <p><strong>Prompt:</strong> ${prompt['Prompt']}</p>
+            <h3>${prompt['title']}</h3>
+            <p><strong>Prompt:</strong> ${prompt['prompt']}</p>
         `);
-        $('#details-content').data('id', prompt['Prompt ID']);
+        $('#details-content').data('id', prompt['id']);
     }
 
     function copyPrompt() {
@@ -66,9 +66,9 @@ $(document).ready(function () {
 
     function editPrompt() {
         const promptID = $('#details-content').data('id');
-        const prompt = promptsData.find(prompt => prompt['Prompt ID'] === promptID);
-        const newPromptText = prompt['Prompt'];
-        const newPromptTitle = prompt['Titel'];
+        const prompt = promptsData.find(prompt => prompt['id'] === promptID);
+        const newPromptText = prompt['prompt'];
+        const newPromptTitle = prompt['title'];
         $('#details-content').html(`
             <input type="text" id="edit-title" value="${newPromptTitle}" />
             <textarea id="edit-prompt" rows="10">${newPromptText}</textarea>
@@ -78,20 +78,28 @@ $(document).ready(function () {
 
     function savePrompt() {
         const promptID = $('#details-content').data('id');
+        const prompt = promptsData.find(prompt => prompt['id'] === promptID);
         const newPromptTitle = $('#edit-title').val();
         const newPromptText = $('#edit-prompt').val();
-        const promptIndex = promptsData.findIndex(prompt => prompt['Prompt ID'] === promptID);
-        
+        const promptIndex = promptsData.findIndex(prompt => prompt['id'] === promptID);
+
         if (promptIndex !== -1) {
-            promptsData[promptIndex].Titel = newPromptTitle;
-            promptsData[promptIndex].Prompt = newPromptText;
+            promptsData[promptIndex].title = newPromptTitle;
+            promptsData[promptIndex].prompt = newPromptText;
+
+            const updatedPrompt = {
+                "Prompt ID": prompt['prompt_id'],
+                "Titel": newPromptTitle,
+                "Prompt": newPromptText
+            };
+
             $.ajax({
                 url: `/prompts/${promptID}`,
                 type: 'PUT',
                 contentType: 'application/json',
-                data: JSON.stringify(promptsData[promptIndex]),
+                data: JSON.stringify(updatedPrompt),
                 success: function () {
-                    displayPromptDetails(promptsData[promptIndex]);
+                    displayPromptDetails(updatedPrompt);
                     $('#save-button').hide();
                     displayPrompts();
                 }
@@ -101,7 +109,7 @@ $(document).ready(function () {
 
     function deletePrompt() {
         const promptID = $('#details-content').data('id');
-        const promptIndex = promptsData.findIndex(prompt => prompt['Prompt ID'] === promptID);
+        const promptIndex = promptsData.findIndex(prompt => prompt['id'] === promptID);
         
         if (promptIndex !== -1) {
             $.ajax({
@@ -172,8 +180,8 @@ $(document).ready(function () {
         const newPromptID = (promptsData.length + 1).toString().padStart(4, '0');
         const newPrompt = {
             "Prompt ID": newPromptID,
-            "Titel": newPromptTitle,
-            "Prompt": newPromptText
+            "title": newPromptTitle,
+            "prompt": newPromptText
         };
         promptsData.push(newPrompt);
         $.ajax({
@@ -197,14 +205,14 @@ $(document).ready(function () {
         const message = $('#chat-input').val().toLowerCase();
         if (message.trim() !== '') {
             const matchedPrompts = promptsData.filter(prompt => 
-                prompt['Titel'].toLowerCase().includes(message) || 
-                prompt['Prompt'].toLowerCase().includes(message)
+                prompt['title'].toLowerCase().includes(message) || 
+                prompt['prompt'].toLowerCase().includes(message)
             );
             $('#prompt-list').empty();
             matchedPrompts.forEach(prompt => {
                 $('#prompt-list').append(`
-                    <div class="prompt-item" data-id="${prompt['Prompt ID']}">
-                        <h3>${truncateText(prompt['Titel'], 30)}${prompt['Titel'].length > 30 ? '... <span class="show-more" data-id="' + prompt['Prompt ID'] + '">mehr anzeigen</span>' : ''}</h3>
+                    <div class="prompt-item" data-id="${prompt['id']}">
+                        <h3>${truncateText(prompt['title'], 30)}${prompt['title'].length > 30 ? '... <span class="show-more" data-id="' + prompt['id'] + '">mehr anzeigen</span>' : ''}</h3>
                     </div>
                 `);
             });

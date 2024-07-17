@@ -1,8 +1,5 @@
 Flask
 Werkzeug
 pandas
-Flask
-gradio
-gpt4all
-huggingface_hub
+sqlite3==0.0.1
 
